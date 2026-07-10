@@ -2263,14 +2263,16 @@ textarea.input-field:focus {
     linear-gradient(180deg, transparent 0%, rgba(10,15,28,0.4) 50%, transparent 100%);
 }
 #aurum-particle-network {
-  position: absolute;
+  position: fixed;
   top: 0; left: 0;
-  width: 100%; height: 100%;
+  width: 100%; height: 100vh;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.85;
+  opacity: 0;
+  transition: opacity 0.9s ease;
   mix-blend-mode: screen;
 }
+#aurum-particle-network.pn-active { opacity: 0.85; }
 .aurum-premium-curves {
   position: absolute;
   top: 0; left: 0;
@@ -10292,7 +10294,8 @@ function initAurumParticleNetwork(canvasId, options) {
     goldRatio: 0.65,
     speed: 0.25,
     mouseRadius: 160,
-    mouseStrength: 0.35
+    mouseStrength: 0.35,
+    viewportMode: false
   }, options || {});
 
   const ctx = canvas.getContext("2d", { alpha: true });
@@ -10306,8 +10309,14 @@ function initAurumParticleNetwork(canvasId, options) {
 
   const resize = () => {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = canvas.parentElement ? canvas.parentElement.offsetWidth : canvas.offsetWidth;
-    H = canvas.parentElement ? canvas.parentElement.offsetHeight : canvas.offsetHeight;
+    if (opts.viewportMode) {
+      W = window.innerWidth;
+      H = window.innerHeight;
+    } else {
+      W = canvas.parentElement ? canvas.parentElement.offsetWidth : canvas.offsetWidth;
+      H = canvas.parentElement ? canvas.parentElement.offsetHeight : canvas.offsetHeight;
+      H = Math.min(H, window.innerHeight * 3);
+    }
     if (W <= 0 || H <= 0) return;
     canvas.width = W * DPR;
     canvas.height = H * DPR;
@@ -10457,9 +10466,14 @@ function initAurumParticleNetwork(canvasId, options) {
 
   if ("IntersectionObserver" in window && zone) {
     const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => { visible = e.isIntersecting; });
+      entries.forEach(e => {
+        visible = e.isIntersecting;
+        if (opts.viewportMode) canvas.classList.toggle("pn-active", e.isIntersecting);
+      });
     }, { threshold: 0 });
     obs.observe(zone);
+  } else if (opts.viewportMode) {
+    canvas.classList.add("pn-active");
   }
 
   resize();
@@ -10474,7 +10488,8 @@ function initAurumPremiumZone() {
     particleCount: 75,
     maxDistance: 140,
     goldRatio: 0.6,
-    speed: 0.22
+    speed: 0.22,
+    viewportMode: true
   });
   initAurumParticleNetwork("aurum-about-particle", {
     particleCount: 65,
@@ -14625,7 +14640,10 @@ window.AURUM_MENTOR_GALLERY = [
       fig.className = "aurum-gal-item";
       fig.style.transitionDelay = ((idx % 5) * 70 + Math.floor(idx / 5) * 120) + "ms";
       var img = document.createElement("img");
-      img.src = src; img.loading = "lazy"; img.decoding = "async";
+      var thumb = src.replace(/\.(jpe?g|png|webp)$/i, "-thumb.$1");
+      img.src = thumb;
+      img.onerror = function(){ this.onerror = null; this.src = src; };
+      img.loading = "lazy"; img.decoding = "async";
       img.alt = cap || "メンターシップ参加者の実績";
       fig.appendChild(img);
       if (cap) {
@@ -15088,6 +15106,38 @@ html::-webkit-scrollbar-thumb:hover{ background:rgba(243,208,120,0.6); }
   animation:aurumSheenSweep 5.6s ease-in-out infinite;
 }
 @keyframes aurumSheenSweep{ 0%,70%{ left:-140%; } 84%,100%{ left:160%; } }
+
+@media (pointer: coarse){
+  .glass{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(10, 15, 28, 0.78);
+  }
+  .glass::after{ animation: none; opacity: 0; }
+  .hero-glass-panel{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(9, 13, 24, 0.82) !important;
+  }
+  .btn-pill{ backdrop-filter: none; -webkit-backdrop-filter: none; }
+  #mobile-menu{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(8, 12, 22, 0.985) !important;
+  }
+  .nav-scrolled{ backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  #aurum-enroll-modal .absolute.inset-0,
+  #aurum-mentor-modal .absolute.inset-0{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(0, 0, 0, 0.92) !important;
+  }
+  #aurum-gal-lightbox{
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(4, 7, 14, 0.96);
+  }
+}
 
 h2, h3, h4{ text-wrap: balance; }
 p, .aurum-enroll-desc, .step-body, .aurum-mentor-feat-desc{ text-wrap: pretty; }
