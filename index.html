@@ -7720,6 +7720,7 @@ window.AURUM_SYSTEMS = window.AURUM_LIVE_DATA.systems;
 
   const initThreeJS = () => {
     try {
+      if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
       const container = document.getElementById("canvas-container");
       if (!container || typeof THREE === "undefined") return;
 
@@ -10511,6 +10512,7 @@ function initAurumAtmosphere() {
     setTimeout(initAurumAtmosphere, 400);
     return;
   }
+  if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
   const canvas = document.getElementById("aurum-atmos-canvas");
   if (!canvas || canvas.dataset.atmosInit === "1") return;
   canvas.dataset.atmosInit = "1";
@@ -15129,6 +15131,7 @@ html::-webkit-scrollbar-thumb:hover{ background:rgba(243,208,120,0.6); }
   .nav-scrolled{ backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   [class*="backdrop-blur"]{ backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   #aurum-fluid-canvas{ display: none !important; }
+  #canvas-container, #aurum-atmos-canvas, #aurum-glitter-canvas{ display: none !important; }
   #aurum-enroll-modal .absolute.inset-0,
   #aurum-mentor-modal .absolute.inset-0{
     backdrop-filter: none !important;
