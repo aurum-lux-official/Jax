@@ -7720,7 +7720,7 @@ window.AURUM_SYSTEMS = window.AURUM_LIVE_DATA.systems;
 
   const initThreeJS = () => {
     try {
-      if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
+      const LITE = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
       const container = document.getElementById("canvas-container");
       if (!container || typeof THREE === "undefined") return;
 
@@ -7728,15 +7728,15 @@ window.AURUM_SYSTEMS = window.AURUM_LIVE_DATA.systems;
       const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 22;
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ? 1.25 : 2));
+      const renderer = new THREE.WebGLRenderer({ antialias: !LITE, alpha: true, powerPreference: LITE ? "default" : "high-performance" });
+      renderer.setPixelRatio(LITE ? 1 : Math.min(window.devicePixelRatio || 1, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
       container.appendChild(renderer.domElement);
 
       let composer = null;
       let bloomPass = null;
       try {
-        if (typeof THREE.EffectComposer !== "undefined" && typeof THREE.UnrealBloomPass !== "undefined") {
+        if (!LITE && typeof THREE.EffectComposer !== "undefined" && typeof THREE.UnrealBloomPass !== "undefined") {
           composer = new THREE.EffectComposer(renderer);
           composer.setPixelRatio(Math.min(window.devicePixelRatio || 1, (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ? 1.25 : 2));
           composer.setSize(window.innerWidth, window.innerHeight);
@@ -8138,7 +8138,7 @@ window.AURUM_SYSTEMS = window.AURUM_LIVE_DATA.systems;
       const coinMats = [edgeMat, aurumMat, slothMat];
 
       const coins = [];
-      const COIN_COUNT = 50;
+      const COIN_COUNT = LITE ? 26 : 50;
 
       function pileTarget(idx, total) {
         let layer = 0, cumul = 0, perLayer = 9;
@@ -15131,7 +15131,7 @@ html::-webkit-scrollbar-thumb:hover{ background:rgba(243,208,120,0.6); }
   .nav-scrolled{ backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   [class*="backdrop-blur"]{ backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
   #aurum-fluid-canvas{ display: none !important; }
-  #canvas-container, #aurum-atmos-canvas, #aurum-glitter-canvas{ display: none !important; }
+  #aurum-atmos-canvas, #aurum-glitter-canvas{ display: none !important; }
   #aurum-enroll-modal .absolute.inset-0,
   #aurum-mentor-modal .absolute.inset-0{
     backdrop-filter: none !important;
