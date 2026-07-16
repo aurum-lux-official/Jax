@@ -1869,23 +1869,63 @@ section .max-w-xl {
 @media (max-width: 767px) {
   .aurum-vp-flagship .vp-chart-wrap { height: 165px; }
 }
-.aurum-ofs-ribbon {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 9px 18px; border-radius: 999px;
-  background: linear-gradient(90deg, rgba(0,255,255,0.06), rgba(197,160,89,0.10));
-  border: 1px solid rgba(0,255,255,0.35);
-  color: #E8F9FF; font-size: 10px; letter-spacing: 0.18em; cursor: pointer;
-  box-shadow: 0 0 16px rgba(0,255,255,0.12);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+.aurum-ofs-ribbon-wrap {
+  position: relative;
+  display: inline-block;
+  border-radius: 999px;
+  padding: 1.5px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 0 22px rgba(0,255,255,0.18), 0 0 60px -18px rgba(46,155,255,0.35);
 }
-.aurum-ofs-ribbon:hover { border-color: rgba(0,255,255,0.7); box-shadow: 0 0 24px rgba(0,255,255,0.25); transform: translateY(-1px); }
-.aurum-ofs-ribbon .lab { color: #00FFFF; font-weight: 700; letter-spacing: 0.3em; font-size: 9px; padding-right: 10px; border-right: 1px solid rgba(255,255,255,0.15); white-space: nowrap; }
+.aurum-ofs-ribbon-wrap::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%; top: 50%;
+  width: 340%;
+  aspect-ratio: 1 / 1;
+  background: conic-gradient(
+    transparent 0deg,
+    transparent 230deg,
+    rgba(0,255,255,0.25) 280deg,
+    #00FFFF 320deg,
+    rgba(0,255,255,0.25) 350deg,
+    transparent 360deg
+  );
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: aurumOfsOrbit 3.4s linear infinite;
+}
+@keyframes aurumOfsOrbit {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurum-ofs-ribbon-wrap::before { animation: none; background: conic-gradient(rgba(0,255,255,0.4), rgba(0,255,255,0.4)); }
+}
+.aurum-ofs-ribbon {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 10px 22px; border-radius: 999px;
+  background: linear-gradient(90deg, rgba(4,16,26,0.97), rgba(9,13,24,0.97));
+  border: 1px solid rgba(0,255,255,0.12);
+  color: #E8F9FF; font-size: 10px; letter-spacing: 0.18em; cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.aurum-ofs-ribbon:hover { transform: translateY(-1px); }
+.aurum-ofs-ribbon .lab { color: #00FFFF; font-weight: 700; letter-spacing: 0.3em; font-size: 9px; padding-right: 12px; border-right: 1px solid rgba(255,255,255,0.15); white-space: nowrap; }
+.aurum-ofs-ribbon .ofs-name {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.24em;
+  color: #2E9BFF;
+  text-shadow: 0 0 14px rgba(46,155,255,0.55), 0 0 30px rgba(46,155,255,0.25);
+  white-space: nowrap;
+}
 .aurum-ofs-ribbon .dot { width: 6px; height: 6px; border-radius: 50%; background: #00FFFF; box-shadow: 0 0 8px rgba(0,255,255,0.8); animation: lfpulse 2s ease-in-out infinite; }
 .aurum-ofs-ribbon .arw { color: #00FFFF; }
-.aurum-ofs-ribbon .nb { white-space: nowrap; }
 @media (max-width: 640px) {
-  .aurum-ofs-ribbon { padding: 8px 14px; gap: 8px; }
-  .aurum-ofs-ribbon .txt { letter-spacing: 0.06em; font-size: 9.5px; }
+  .aurum-ofs-ribbon { padding: 9px 18px; gap: 10px; }
+  .aurum-ofs-ribbon .ofs-name { font-size: 14px; letter-spacing: 0.2em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .aurum-rank-card::before, .aurum-rank-shine, .aurum-rank-trophy { animation: none; }
@@ -4979,12 +5019,14 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
         </div>
       </div>
       <div class="hero-mask mb-6 md:mb-10">
-        <button onclick="scrollToSec('system')" class="hero-reveal aurum-ofs-ribbon">
-          <span class="dot"></span>
-          <span class="lab">NEW EA</span>
-          <span class="txt"><span class="nb">フラッグシップ「OFS v2」一般開放</span> <span class="nb">— 自動損切り搭載</span></span>
-          <span class="arw">›</span>
-        </button>
+        <div class="hero-reveal aurum-ofs-ribbon-wrap">
+          <button onclick="scrollToSec('system')" class="aurum-ofs-ribbon">
+            <span class="dot"></span>
+            <span class="lab">NEW EA</span>
+            <span class="ofs-name">OFS v2</span>
+            <span class="arw">›</span>
+          </button>
+        </div>
       </div>
       <div class="hero-mask">
         <div class="hero-reveal flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
