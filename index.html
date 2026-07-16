@@ -1704,11 +1704,12 @@ section .max-w-xl {
 
 .aurum-rank-grid {
   display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
+  grid-template-columns: repeat(2, 1fr) !important;
   gap: 8px !important;
 }
 @media (min-width: 768px) {
   .aurum-rank-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
     gap: 18px !important;
   }
 }
@@ -1858,8 +1859,8 @@ section .max-w-xl {
   animation: aurumOfsGlow 3s ease-in-out infinite;
 }
 @keyframes aurumOfsGlow {
-  0%, 100% { box-shadow: 0 0 10px rgba(0,255,255,0.16), inset 0 0 8px rgba(0,255,255,0.05); }
-  50% { box-shadow: 0 0 22px rgba(0,255,255,0.36), inset 0 0 14px rgba(0,255,255,0.10); }
+  0%, 100% { box-shadow: 0 0 14px rgba(0,255,255,0.28), 0 0 0 1px rgba(0,255,255,0.30), inset 0 0 10px rgba(0,255,255,0.07); }
+  50% { box-shadow: 0 0 30px rgba(0,255,255,0.55), 0 0 0 1px rgba(0,255,255,0.55), inset 0 0 16px rgba(0,255,255,0.13); }
 }
 @media (prefers-reduced-motion: reduce) {
   .system-card[data-flip-system="ofs_v2"] { animation: none; box-shadow: 0 0 14px rgba(0,255,255,0.25); }
@@ -1881,6 +1882,7 @@ section .max-w-xl {
 .aurum-ofs-ribbon .lab { color: #00FFFF; font-weight: 700; letter-spacing: 0.3em; font-size: 9px; padding-right: 10px; border-right: 1px solid rgba(255,255,255,0.15); }
 .aurum-ofs-ribbon .dot { width: 6px; height: 6px; border-radius: 50%; background: #00FFFF; box-shadow: 0 0 8px rgba(0,255,255,0.8); animation: lfpulse 2s ease-in-out infinite; }
 .aurum-ofs-ribbon .arw { color: #00FFFF; }
+.aurum-ofs-ribbon .nb { white-space: nowrap; }
 @media (max-width: 640px) {
   .aurum-ofs-ribbon { padding: 8px 14px; gap: 8px; }
   .aurum-ofs-ribbon .txt { letter-spacing: 0.06em; font-size: 9.5px; }
@@ -3295,6 +3297,10 @@ textarea.input-field:focus {
 }
 .aurum-fade-text > span {
   display: inline-block;
+}
+.aurum-fade-text .aurum-word {
+  display: inline-block;
+  white-space: nowrap;
 }
 .aurum-fade-text .aurum-char {
   display: inline-block;
@@ -4976,7 +4982,7 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
         <button onclick="scrollToSec('system')" class="hero-reveal aurum-ofs-ribbon">
           <span class="dot"></span>
           <span class="lab">NEW</span>
-          <span class="txt">フラッグシップ「OFS v2」一般開放 — 自動損切り搭載</span>
+          <span class="txt"><span class="nb">フラッグシップ「OFS v2」一般開放</span> <span class="nb">— 自動損切り搭載</span></span>
           <span class="arw">›</span>
         </button>
       </div>
@@ -11616,7 +11622,7 @@ setTimeout(initAurumAtmosphere, 1500);
             '<div class="aurum-disc-reply">' +
               '<div class="aurum-disc-reply-avatar">' + escapeHtml(r.name.replace("ユーザー","U").substring(0,2)) + '</div>' +
               '<div class="aurum-disc-reply-body">' +
-                '<div class="aurum-disc-reply-head"><span class="aurum-disc-reply-name">' + escapeHtml(r.name) + '</span><span class="aurum-disc-reply-time">' + fmtAgo(r.minutesAgo) + '</span></div>' +
+                '<div class="aurum-disc-reply-head"><span class="aurum-disc-reply-name">' + escapeHtml(r.name) + '</span></div>' +
                 '<div class="aurum-disc-reply-text">' + escapeHtml(r.text) + '</div>' +
               '</div>' +
             '</div>';
@@ -11627,7 +11633,7 @@ setTimeout(initAurumAtmosphere, 1500);
             '<div class="aurum-disc-reply aurum-disc-reply-mine">' +
               '<div class="aurum-disc-reply-avatar">YOU</div>' +
               '<div class="aurum-disc-reply-body">' +
-                '<div class="aurum-disc-reply-head"><span class="aurum-disc-reply-name">あなた</span><span class="aurum-disc-reply-time">' + fmtAgo(mins) + ' · 自分のみ表示</span></div>' +
+                '<div class="aurum-disc-reply-head"><span class="aurum-disc-reply-name">あなた</span><span class="aurum-disc-reply-time">自分のみ表示</span></div>' +
                 '<div class="aurum-disc-reply-text">' + escapeHtml(r.text) + '</div>' +
               '</div>' +
             '</div>';
@@ -12361,12 +12367,13 @@ function initAurumFadeText() {
     let originalText = textNode ? textNode.dataset.text : el.textContent;
     if (!originalText || !originalText.trim()) return;
 
-    const newHTML = Array.from(originalText.trim()).map((ch, i) => {
-      if (ch === " " || ch === "\u3000") {
-        return '<span class="aurum-space"></span>';
-      }
-      return '<span class="aurum-char" style="transition-delay:' +
-        (i * 35) + 'ms;">' + ch + '</span>';
+    let charIdx = 0;
+    const buildChar = (ch) => '<span class="aurum-char" style="transition-delay:' +
+      ((charIdx++) * 35) + 'ms;">' + ch + '</span>';
+    const newHTML = originalText.trim().split(/([ \u3000]+)/).map((seg) => {
+      if (!seg) return "";
+      if (/^[ \u3000]+$/.test(seg)) { charIdx++; return '<span class="aurum-space"></span>'; }
+      return '<span class="aurum-word">' + Array.from(seg).map(buildChar).join("") + '</span>';
     }).join("");
 
     if (textNode) {
@@ -12400,7 +12407,13 @@ setTimeout(initAurumFadeText, 600);
 
 function generateUserWeeklyData(sysKey, userIndex, baseROI, currentMondaySeed) {
   const baseSeed = sysKey.charCodeAt(0) * 1000 + userIndex * 17;
-  const startWeeksAgo = 4 + Math.floor(seededRandom(baseSeed + 999) * 24);
+  let startWeeksAgo;
+  if (sysKey === "ofs_v2") {
+    const aprAnchorWeeks = Math.max(4, Math.floor((Date.now() - new Date(2026, 3, 1).getTime()) / 604800000));
+    startWeeksAgo = Math.max(4, aprAnchorWeeks - 4 + Math.floor(seededRandom(baseSeed + 999) * 6));
+  } else {
+    startWeeksAgo = 4 + Math.floor(seededRandom(baseSeed + 999) * 24);
+  }
   const startMondaySeed = currentMondaySeed - startWeeksAgo;
 
   const now = new Date();
