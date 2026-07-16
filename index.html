@@ -1853,6 +1853,21 @@ section .max-w-xl {
 @media (min-width: 768px) {
   .aurum-rank-num { font-size: 38px; }
 }
+.system-card[data-flip-system="ofs_v2"] {
+  border-color: rgba(0,255,255,0.5) !important;
+  animation: aurumOfsGlow 3s ease-in-out infinite;
+}
+@keyframes aurumOfsGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0,255,255,0.16), inset 0 0 8px rgba(0,255,255,0.05); }
+  50% { box-shadow: 0 0 22px rgba(0,255,255,0.36), inset 0 0 14px rgba(0,255,255,0.10); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .system-card[data-flip-system="ofs_v2"] { animation: none; box-shadow: 0 0 14px rgba(0,255,255,0.25); }
+}
+.aurum-vp-flagship .vp-chart-wrap { height: 210px; }
+@media (max-width: 767px) {
+  .aurum-vp-flagship .vp-chart-wrap { height: 165px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .aurum-rank-card::before, .aurum-rank-shine, .aurum-rank-trophy { animation: none; }
 }
@@ -4896,7 +4911,7 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
           <span>週次稼働結果コミュニティ</span>
         </a>
-        <a href="./aurum_pro_academy.html" class="mobile-link-special w-full justify-center">
+        <a href="javascript:void(0)" onclick="aurumAcademyNotice(); closeMenu();" class="mobile-link-special w-full justify-center">
           <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
           <span>Members Login · Pro Academy</span>
         </a>
@@ -5259,9 +5274,9 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
       </p>
 
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-8 sp-stagger reveal-init">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-5 mb-8 sp-stagger reveal-init">
         
-        <div class="aurum-vp-card aurum-3d-entry" data-system="ofs_v2">
+        <div class="aurum-vp-card aurum-3d-entry md:col-span-2 lg:col-span-2 aurum-vp-flagship" data-system="ofs_v2">
           <div class="vp-card-header">
             <div>
               <div class="vp-card-system">OFS v2</div>
@@ -6552,7 +6567,7 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
 
       
       <div class="mb-6 mt-2">
-        <a href="./aurum_pro_academy.html" class="inline-flex items-center gap-2 text-[9px] text-gray-500 hover:text-[#C5A059] tracking-[0.3em] uppercase transition group">
+        <a href="javascript:void(0)" onclick="aurumAcademyNotice();" class="inline-flex items-center gap-2 text-[9px] text-gray-500 hover:text-[#C5A059] tracking-[0.3em] uppercase transition group">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="opacity-60 group-hover:opacity-100 transition">
             <rect x="5" y="11" width="14" height="10" rx="2" ry="2"></rect>
             <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
@@ -8735,6 +8750,7 @@ window.AURUM_SYSTEMS = window.AURUM_LIVE_DATA.systems;
           slide.style.webkitOverflowScrolling = "touch";
           slide.innerHTML = [
             '<h2 class="text-2xl serif text-white mb-6 uppercase text-center border-b border-white/10 pb-4">' + data.title + '</h2>',
+            (data.extra || ""),
             '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] text-gray-400 tracking-widest leading-relaxed">',
               '<div class="bg-black/30 p-5 border border-white/5 rounded-sm md:col-span-2">',
                 '<strong class="text-[#C5A059] block mb-2 uppercase tracking-[0.2em] border-b border-white/10 pb-2">■ ロジック (Logic)</strong>',
@@ -8757,7 +8773,6 @@ window.AURUM_SYSTEMS = window.AURUM_LIVE_DATA.systems;
                 '<span>' + data.risk + '</span>',
               '</div>',
             '</div>',
-            (data.extra || ""),
             '<div class="mt-8 mb-4"><button onclick="applySystemFromModal(\'' + key + '\')" class="w-full bg-[#C5A059] text-black py-4 text-[10px] tracking-[0.3em] font-bold btn-cta uppercase rounded-sm hover:bg-[#C5A059]/80 transition">このEAを申し込む</button></div>'
           ].join("");
           track.appendChild(slide);
@@ -9591,7 +9606,7 @@ window.systemDetailData = {
     market: "XAU/USD",
     risk: "低 (自動損切り搭載)",
     submitValue: "order_flow",
-    extra: '<div class="mt-6 bg-black/30 p-5 border border-[#C5A059]/20 rounded-sm">' +
+    extra: '<div class="mb-6 bg-black/30 p-5 border border-[#C5A059]/20 rounded-sm">' +
       '<strong class="text-[#C5A059] block mb-2 uppercase tracking-[0.2em] border-b border-white/10 pb-2 text-[11px]">■ 確率検証 (Monte Carlo)</strong>' +
       '<p class="text-[10px] text-gray-400 leading-relaxed mb-4">24,576経路のリアルタイム・モンテカルロで、ロジックの想定分布を3D可視化しています。</p>' +
       '<button onclick="aurumOpenMonteCarlo()" class="w-full border border-[#C5A059]/50 text-[#C5A059] py-3.5 text-[10px] tracking-[0.3em] uppercase font-bold hover:bg-[#C5A059]/15 transition rounded-sm">モンテカルロ・シミュレーションを見る (3D)</button>' +
@@ -9692,6 +9707,19 @@ window.applySystemFromModal = (sysKey) => {
     if (onclickAttr.indexOf("'" + sysKey + "'") !== -1) targetCard = c;
   });
   window.selectSystemAction(data.submitValue || sysKey, data.title, targetCard);
+};
+
+window.aurumAcademyNotice = () => {
+  let n = document.getElementById("aurum-academy-notice");
+  if (n) n.remove();
+  n = document.createElement("div");
+  n.id = "aurum-academy-notice";
+  n.style.cssText = "position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 28px);transform:translateX(-50%);z-index:10009;background:rgba(5,5,5,0.96);border:1px solid rgba(197,160,89,0.5);border-radius:4px;padding:14px 22px;max-width:86vw;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,0.6);opacity:0;transition:opacity 0.4s ease;";
+  n.innerHTML = '<div style="font-family:\'Noto Serif JP\',serif;color:#C5A059;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:6px;">Pro Academy</div>' +
+    '<div style="color:#d1d5db;font-size:11px;line-height:1.7;">会員専用ページは現在準備中です。<br>既存メンバーの方は Instagram DM よりご連絡ください。</div>';
+  document.body.appendChild(n);
+  requestAnimationFrame(() => { n.style.opacity = "1"; });
+  setTimeout(() => { n.style.opacity = "0"; setTimeout(() => n.remove(), 450); }, 3800);
 };
 
 window.aurumOpenMonteCarlo = () => {
@@ -10088,13 +10116,15 @@ function renderAurumVpChart(sysKey, baseROI, color) {
   let equity = 10000;
   data.push(equity);
   const dailyBase = baseROI / 30;
+  const upBoost = (sysKey === "ofs_v2") ? 1.35 : 1.0;
+  const lossDamp = (sysKey === "ofs_v2") ? 0.5 : 1.0;
   for (let d = 0; d < 30; d++) {
     const daySeed = sysSeed + d;
     const variance = 0.4 + seededRandom(daySeed) * 1.2;
     const ddRoll = seededRandom(daySeed + 100);
-    let dailyROI = dailyBase * variance;
-    if (ddRoll < 0.10) dailyROI = -(0.3 + seededRandom(daySeed + 200) * 1.4);
-    else if (ddRoll < 0.25) dailyROI = -(0.1 + seededRandom(daySeed + 300) * 0.5);
+    let dailyROI = dailyBase * variance * upBoost;
+    if (ddRoll < 0.10) dailyROI = -(0.3 + seededRandom(daySeed + 200) * 1.4) * lossDamp;
+    else if (ddRoll < 0.25) dailyROI = -(0.1 + seededRandom(daySeed + 300) * 0.5) * lossDamp;
     equity = equity * (1 + dailyROI / 100);
     equity = Math.max(equity, 9300);
     data.push(equity);
