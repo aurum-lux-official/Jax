@@ -1869,38 +1869,41 @@ section .max-w-xl {
 @media (max-width: 767px) {
   .aurum-vp-flagship .vp-chart-wrap { height: 165px; }
 }
+.aurum-ofs-ribbon-glow {
+  display: inline-flex;
+  border-radius: 999px;
+  box-shadow: 0 0 22px rgba(0,255,255,0.16), 0 0 60px -20px rgba(46,155,255,0.32);
+}
 .aurum-ofs-ribbon-wrap {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
   border-radius: 999px;
-  padding: 1.5px;
-  overflow: hidden;
-  isolation: isolate;
-  box-shadow: 0 0 22px rgba(0,255,255,0.18), 0 0 60px -18px rgba(46,155,255,0.35);
 }
-.aurum-ofs-ribbon-wrap::before {
-  content: "";
+.aurum-ofs-orbit {
   position: absolute;
-  z-index: -1;
-  left: 50%; top: 50%;
-  width: 340%;
-  aspect-ratio: 1 / 1;
-  background: conic-gradient(
-    transparent 0deg,
-    transparent 230deg,
-    rgba(0,255,255,0.25) 280deg,
-    #00FFFF 320deg,
-    rgba(0,255,255,0.25) 350deg,
-    transparent 360deg
-  );
-  transform: translate(-50%, -50%) rotate(0deg);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+.aurum-ofs-orbit rect {
+  fill: none;
+  stroke: #00FFFF;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 16 84;
+  stroke-dashoffset: 0;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(0,255,255,0.8));
   animation: aurumOfsOrbit 3.4s linear infinite;
 }
 @keyframes aurumOfsOrbit {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
+  to { stroke-dashoffset: -100; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .aurum-ofs-ribbon-wrap::before { animation: none; background: conic-gradient(rgba(0,255,255,0.4), rgba(0,255,255,0.4)); }
+  .aurum-ofs-orbit rect { animation: none; stroke-dasharray: none; opacity: 0.45; }
 }
 .aurum-ofs-ribbon {
   display: inline-flex; align-items: center; gap: 12px;
@@ -5019,13 +5022,16 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
         </div>
       </div>
       <div class="hero-mask mb-6 md:mb-10">
-        <div class="hero-reveal aurum-ofs-ribbon-wrap">
-          <button onclick="scrollToSec('system')" class="aurum-ofs-ribbon">
-            <span class="dot"></span>
-            <span class="lab">NEW EA</span>
-            <span class="ofs-name">OFS v2</span>
-            <span class="arw">›</span>
-          </button>
+        <div class="hero-reveal aurum-ofs-ribbon-glow">
+          <div class="aurum-ofs-ribbon-wrap">
+            <svg class="aurum-ofs-orbit" aria-hidden="true"><rect pathLength="100"/></svg>
+            <button onclick="scrollToSec('system')" class="aurum-ofs-ribbon">
+              <span class="dot"></span>
+              <span class="lab">NEW EA</span>
+              <span class="ofs-name">OFS v2</span>
+              <span class="arw">›</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="hero-mask">
@@ -6220,7 +6226,7 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-10">
         <h3 class="text-[10px] text-[#F3D078] tracking-[0.4em] uppercase mb-3 serif reveal-init">Mentorship Program</h3>
-        <h2 class="text-2xl md:text-3xl serif text-white mb-4 tracking-widest reveal-init">JAY 直接指導 メンターシップ</h2>
+        <h2 class="text-2xl md:text-3xl serif text-white mb-4 tracking-widest reveal-init"><span class="whitespace-nowrap">JAY 直接指導</span> <span class="whitespace-nowrap">メンターシップ</span></h2>
         <p class="text-sm text-gray-400 leading-loose reveal-init max-w-2xl mx-auto">
           FX裁量トレードの「相場分析」を、JAYがマンツーマンでお伝えするプログラムです。<br>
           チャートの見方から環境認識、エントリーの考え方まで、ご自身の力で判断できるようになることを目指します。<br>
@@ -9783,6 +9789,34 @@ window.applySystemFromModal = (sysKey) => {
   });
   window.selectSystemAction(data.submitValue || sysKey, data.title, targetCard);
 };
+
+window.initOfsOrbit = () => {
+  try {
+    const wrap = document.querySelector(".aurum-ofs-ribbon-wrap");
+    const svg = wrap ? wrap.querySelector(".aurum-ofs-orbit") : null;
+    const rect = svg ? svg.querySelector("rect") : null;
+    if (!wrap || !svg || !rect) return;
+    const sync = () => {
+      const w = wrap.offsetWidth, h = wrap.offsetHeight;
+      if (!w || !h) return;
+      svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+      rect.setAttribute("x", "0.75");
+      rect.setAttribute("y", "0.75");
+      rect.setAttribute("width", String(w - 1.5));
+      rect.setAttribute("height", String(h - 1.5));
+      rect.setAttribute("rx", String((h - 1.5) / 2));
+    };
+    sync();
+    window.addEventListener("resize", sync);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync);
+    setTimeout(sync, 1200);
+  } catch(_) {}
+};
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function(){ try { initOfsOrbit(); } catch(e) { console.error("[AURUM init error]","initOfsOrbit",e); } });
+} else {
+  initOfsOrbit();
+}
 
 window.aurumAcademyNotice = () => {
   let n = document.getElementById("aurum-academy-notice");
