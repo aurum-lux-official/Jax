@@ -1868,6 +1868,23 @@ section .max-w-xl {
 @media (max-width: 767px) {
   .aurum-vp-flagship .vp-chart-wrap { height: 165px; }
 }
+.aurum-ofs-ribbon {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 9px 18px; border-radius: 999px;
+  background: linear-gradient(90deg, rgba(0,255,255,0.06), rgba(197,160,89,0.10));
+  border: 1px solid rgba(0,255,255,0.35);
+  color: #E8F9FF; font-size: 10px; letter-spacing: 0.18em; cursor: pointer;
+  box-shadow: 0 0 16px rgba(0,255,255,0.12);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.aurum-ofs-ribbon:hover { border-color: rgba(0,255,255,0.7); box-shadow: 0 0 24px rgba(0,255,255,0.25); transform: translateY(-1px); }
+.aurum-ofs-ribbon .lab { color: #00FFFF; font-weight: 700; letter-spacing: 0.3em; font-size: 9px; padding-right: 10px; border-right: 1px solid rgba(255,255,255,0.15); }
+.aurum-ofs-ribbon .dot { width: 6px; height: 6px; border-radius: 50%; background: #00FFFF; box-shadow: 0 0 8px rgba(0,255,255,0.8); animation: lfpulse 2s ease-in-out infinite; }
+.aurum-ofs-ribbon .arw { color: #00FFFF; }
+@media (max-width: 640px) {
+  .aurum-ofs-ribbon { padding: 8px 14px; gap: 8px; }
+  .aurum-ofs-ribbon .txt { letter-spacing: 0.06em; font-size: 9.5px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .aurum-rank-card::before, .aurum-rank-shine, .aurum-rank-trophy { animation: none; }
 }
@@ -4949,11 +4966,19 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
       <div class="hero-mask mb-6 md:mb-10">
         <h1 class="text-4xl md:text-8xl font-semibold leading-tight serif text-white hero-reveal">Execution.</h1>
       </div>
-      <div class="hero-mask mb-8 md:mb-16">
+      <div class="hero-mask mb-6 md:mb-8">
         
         <div id="hero-typing-frame" class="hero-typing-frame hero-reveal">
           <p id="hero-typing-target" class="text-gray-300 text-xs md:text-sm leading-loose tracking-[0.2em]">機関投資家の思考を再現した、<br>Volume × Price Action アルゴリズム</p>
         </div>
+      </div>
+      <div class="hero-mask mb-6 md:mb-10">
+        <button onclick="scrollToSec('system')" class="hero-reveal aurum-ofs-ribbon">
+          <span class="dot"></span>
+          <span class="lab">NEW</span>
+          <span class="txt">フラッグシップ「OFS v2」一般開放 — 自動損切り搭載</span>
+          <span class="arw">›</span>
+        </button>
       </div>
       <div class="hero-mask">
         <div class="hero-reveal flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
@@ -5518,8 +5543,8 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
 
       <div class="glass p-6 md:p-10 rounded-sm reveal-init mt-6">
         <div class="flex flex-wrap gap-2 mb-8 justify-center md:justify-start">
-          <button class="perf-sys-tab px-4 py-2 border border-white/10 text-[9px] tracking-widest uppercase rounded-sm transition" onclick="updatePerfSystem('ofs_v2', this)">OFS v2</button>
-          <button class="perf-sys-tab active px-4 py-2 border border-white/10 text-[9px] tracking-widest uppercase rounded-sm transition" onclick="updatePerfSystem('order_flow', this)">Order Flow Structure</button>
+          <button class="perf-sys-tab active px-4 py-2 border border-white/10 text-[9px] tracking-widest uppercase rounded-sm transition" onclick="updatePerfSystem('ofs_v2', this)">OFS v2</button>
+          <button class="perf-sys-tab px-4 py-2 border border-white/10 text-[9px] tracking-widest uppercase rounded-sm transition" onclick="updatePerfSystem('order_flow', this)">Order Flow Structure</button>
           <button class="perf-sys-tab px-4 py-2 border border-white/10 text-[9px] tracking-widest uppercase rounded-sm transition" onclick="updatePerfSystem('trend_scalping', this)">Trend Scalping</button>
           <button class="perf-sys-tab px-4 py-2 border border-white/10 text-[9px] tracking-widest uppercase rounded-sm transition" onclick="updatePerfSystem('smc_grid', this)">SMC Grid</button>
         </div>
@@ -8714,12 +8739,14 @@ window.AURUM_SYSTEMS = window.AURUM_LIVE_DATA.systems;
           if (entries[0].isIntersecting) {
             if (typeof Chart !== "undefined") {
               initPerfChart();
+              aurumPerfDefaultTab();
               obs.unobserve(perfSection);
             } else {
               const waitForChart = setInterval(() => {
                 if (typeof Chart !== "undefined") {
                   clearInterval(waitForChart);
                   initPerfChart();
+                  aurumPerfDefaultTab();
                   obs.unobserve(perfSection);
                 }
               }, 100);
@@ -9732,9 +9759,16 @@ window.aurumOpenMonteCarlo = () => {
       '<span style="font-family:\'Noto Serif JP\',serif;color:#C5A059;font-size:11px;letter-spacing:0.25em;text-transform:uppercase;">Monte Carlo Simulation</span>' +
       '<button onclick="aurumCloseMonteCarlo()" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);color:#C5A059;background:transparent;cursor:pointer;font-size:18px;line-height:1;">&times;</button>' +
     '</div>' +
-    '<iframe src="montecarlo.html" style="flex:1;border:0;width:100%;background:#050505;" title="Monte Carlo Simulation"></iframe>';
+    '<iframe src="montecarlo.html" style="flex:1;border:0;width:100%;background:#050505;" title="Monte Carlo Simulation"></iframe>' +
+    '<div style="flex-shrink:0;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 12px);background:#050505;border-top:1px solid rgba(197,160,89,0.25);">' +
+      '<button onclick="aurumMcApply()" style="width:100%;background:#C5A059;color:#000;border:0;padding:14px;font-size:10px;letter-spacing:0.3em;font-weight:700;text-transform:uppercase;border-radius:2px;cursor:pointer;font-family:inherit;">このロジックで申請する — OFS v2</button>' +
+    '</div>';
   document.body.appendChild(ov);
   document.body.style.overflow = "hidden";
+};
+window.aurumMcApply = () => {
+  window.aurumCloseMonteCarlo();
+  window.applySystemFromModal("ofs_v2");
 };
 window.aurumCloseMonteCarlo = () => {
   const ov = document.getElementById("aurum-mc-overlay");
@@ -12832,6 +12866,13 @@ window.closeUserDetail = () => {
       window.userDetailChart = null;
     }
   }, 300);
+};
+
+window.aurumPerfDefaultTab = () => {
+  try {
+    const btn = document.querySelector(".perf-sys-tab");
+    if (btn && typeof window.updatePerfSystem === "function") window.updatePerfSystem("ofs_v2", btn);
+  } catch(_) {}
 };
 
 window.updatePerfSystem = (sysKey, btn) => {
