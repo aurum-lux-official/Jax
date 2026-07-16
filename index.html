@@ -1872,7 +1872,6 @@ section .max-w-xl {
 .aurum-ofs-ribbon-glow {
   display: inline-flex;
   border-radius: 999px;
-  box-shadow: 0 0 22px rgba(0,255,255,0.16), 0 0 60px -20px rgba(46,155,255,0.32);
 }
 .aurum-ofs-ribbon-wrap {
   position: relative;
@@ -1884,26 +1883,37 @@ section .max-w-xl {
   inset: 0;
   width: 100%;
   height: 100%;
-  overflow: visible;
   pointer-events: none;
   z-index: 2;
 }
 .aurum-ofs-orbit rect {
   fill: none;
-  stroke: #00FFFF;
-  stroke-width: 1.5;
+  stroke-dashoffset: 0;
+}
+.aurum-ofs-orbit .orbit-base {
+  stroke: rgba(0,255,255,0.16);
+  stroke-width: 1;
+}
+.aurum-ofs-orbit .orbit-trail {
+  stroke: rgba(0,255,255,0.30);
+  stroke-width: 4.5;
   stroke-linecap: round;
   stroke-dasharray: 16 84;
-  stroke-dashoffset: 0;
-  opacity: 0.9;
-  filter: drop-shadow(0 0 6px rgba(0,255,255,0.8));
+  animation: aurumOfsOrbit 3.4s linear infinite;
+}
+.aurum-ofs-orbit .orbit-core {
+  stroke: #00FFFF;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 16 84;
   animation: aurumOfsOrbit 3.4s linear infinite;
 }
 @keyframes aurumOfsOrbit {
   to { stroke-dashoffset: -100; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .aurum-ofs-orbit rect { animation: none; stroke-dasharray: none; opacity: 0.45; }
+  .aurum-ofs-orbit .orbit-trail { animation: none; stroke-dasharray: none; opacity: 0.25; }
+  .aurum-ofs-orbit .orbit-core { animation: none; stroke-dasharray: none; opacity: 0.45; }
 }
 .aurum-ofs-ribbon {
   display: inline-flex; align-items: center; gap: 12px;
@@ -5024,7 +5034,7 @@ input.aurum-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 
       <div class="hero-mask mb-6 md:mb-10">
         <div class="hero-reveal aurum-ofs-ribbon-glow">
           <div class="aurum-ofs-ribbon-wrap">
-            <svg class="aurum-ofs-orbit" aria-hidden="true"><rect pathLength="100"/></svg>
+            <svg class="aurum-ofs-orbit" aria-hidden="true"><rect class="orbit-base" pathLength="100"/><rect class="orbit-trail" pathLength="100"/><rect class="orbit-core" pathLength="100"/></svg>
             <button onclick="scrollToSec('system')" class="aurum-ofs-ribbon">
               <span class="dot"></span>
               <span class="lab">NEW EA</span>
@@ -9794,17 +9804,20 @@ window.initOfsOrbit = () => {
   try {
     const wrap = document.querySelector(".aurum-ofs-ribbon-wrap");
     const svg = wrap ? wrap.querySelector(".aurum-ofs-orbit") : null;
-    const rect = svg ? svg.querySelector("rect") : null;
-    if (!wrap || !svg || !rect) return;
+    const rects = svg ? svg.querySelectorAll("rect") : [];
+    if (!wrap || !svg || !rects.length) return;
     const sync = () => {
       const w = wrap.offsetWidth, h = wrap.offsetHeight;
       if (!w || !h) return;
       svg.setAttribute("viewBox", "0 0 " + w + " " + h);
-      rect.setAttribute("x", "0.75");
-      rect.setAttribute("y", "0.75");
-      rect.setAttribute("width", String(w - 1.5));
-      rect.setAttribute("height", String(h - 1.5));
-      rect.setAttribute("rx", String((h - 1.5) / 2));
+      const inset = 2.5;
+      rects.forEach((rect) => {
+        rect.setAttribute("x", String(inset));
+        rect.setAttribute("y", String(inset));
+        rect.setAttribute("width", String(w - inset * 2));
+        rect.setAttribute("height", String(h - inset * 2));
+        rect.setAttribute("rx", String((h - inset * 2) / 2));
+      });
     };
     sync();
     window.addEventListener("resize", sync);
